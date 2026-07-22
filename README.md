@@ -19,7 +19,12 @@ cp .env.example .env
 npm run dev
 ```
 
-Open the **Local** URL printed in the terminal after `npm run dev` (Vite default: `http://localhost:5173`; if that port is taken, it uses the next free one). The API runs on `http://localhost:3003`.
+Open **http://localhost:5176** in your browser after `npm run dev`.
+
+- **Frontend (the app):** http://localhost:5176
+- **API (backend only):** http://localhost:3003 — do not open this for the UI
+
+> Port 5173 may be used by another project on your machine (e.g. Beach Pose AI). This app always uses **5176**.
 
 ## Flow
 

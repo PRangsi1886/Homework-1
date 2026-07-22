@@ -74,6 +74,19 @@ app.get('/api/health', (_req, res) => {
   })
 })
 
+app.get('/', (_req, res) => {
+  res.type('html').send(`<!doctype html>
+<html lang="en">
+<head><meta charset="UTF-8"><title>Insight Observer API</title></head>
+<body style="font-family: system-ui, sans-serif; max-width: 40rem; margin: 3rem auto; line-height: 1.6;">
+  <h1>Insight Observer API</h1>
+  <p>This port (<code>${port}</code>) is the backend only — not the app UI.</p>
+  <p>Open the frontend at <a href="http://localhost:5176">http://localhost:5176</a> after running <code>npm run dev</code>.</p>
+  <p>Health check: <a href="/api/health">/api/health</a></p>
+</body>
+</html>`)
+})
+
 app.post('/api/youtube-metadata', async (req, res) => {
   const { url } = req.body
   if (!url?.trim()) {
@@ -349,4 +362,5 @@ Write the final synthesis report.`,
 
 app.listen(port, () => {
   console.log(`Insight Observer API running at http://localhost:${port}`)
+  console.log(`Open the app at http://localhost:5176`)
 })
