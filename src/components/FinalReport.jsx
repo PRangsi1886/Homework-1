@@ -1,3 +1,5 @@
+import ReactionGif from './ReactionGif'
+import { scoreFromReport } from '../lib/reactionGif'
 function sentimentToScore(sentiment) {
   const map = { positive: 8.4, mixed: 6.5, negative: 4.2, neutral: 5.5 }
   return map[sentiment] ?? 7.0
@@ -13,8 +15,8 @@ function RatingGauge({ score, label }) {
       <svg viewBox="0 0 200 120" className="gauge-svg" aria-hidden="true">
         <defs>
           <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#E50914" />
-            <stop offset="50%" stopColor="#ff3355" />
+            <stop offset="0%" stopColor="#d4af37" />
+            <stop offset="50%" stopColor="#a61b2e" />
             <stop offset="100%" stopColor="#ffffff" />
           </linearGradient>
         </defs>
@@ -37,7 +39,7 @@ function RatingGauge({ score, label }) {
           cx={100 + 80 * Math.cos(Math.PI - (angle * Math.PI) / 180)}
           cy={100 - 80 * Math.sin((angle * Math.PI) / 180)}
           r="7"
-          fill="#E50914"
+          fill="#d4af37"
         />
       </svg>
       <div className="gauge-center">
@@ -77,7 +79,7 @@ export default function FinalReport({ report, loading, videoMetadata }) {
         <div className="report-header">
           <h2>Reviews</h2>
         </div>
-        <p className="muted">Composing your emotional viewing report… 🍿</p>
+        <p className="muted">Composing your emotional viewing report… 🏆</p>
       </section>
     )
   }
@@ -89,7 +91,7 @@ export default function FinalReport({ report, loading, videoMetadata }) {
   const scores = report.scores ?? {}
   const criticReviews = report.criticReviews ?? []
   const fallbackReview = report.headline
-    ? [{ author: 'Insight Observer', timeAgo: 'Just now', rating: 5, text: report.headline }]
+    ? [{ author: 'Theatre Theatrics', timeAgo: 'Just now', rating: 5, text: report.headline }]
     : []
 
   return (
@@ -106,11 +108,13 @@ export default function FinalReport({ report, loading, videoMetadata }) {
         </div>
       </div>
 
+      <ReactionGif score={scoreFromReport(report)} subtitle="Based on your captured reactions" />
+
       <RatingGauge score={overallScore} label={report.ratedLabel ?? 'Your Rating'} />
 
       <div className="score-cards-row">
         <ScoreCard
-          icon="🍿"
+          icon="🏆"
           value={scores.engagement?.value ?? 85}
           label={scores.engagement?.label ?? 'Engagement'}
         />
@@ -135,9 +139,9 @@ export default function FinalReport({ report, loading, videoMetadata }) {
         <article key={i} className="critic-card">
           <div className="critic-top">
             <div className="critic-author">
-              <span className="critic-avatar">🎥</span>
+              <span className="critic-avatar">🏆</span>
               <div>
-                <strong>{review.author ?? 'Insight Observer'}</strong>
+                <strong>{review.author ?? 'Theatre Theatrics'}</strong>
                 <span className="critic-time">{review.timeAgo ?? 'Just now'}</span>
               </div>
             </div>

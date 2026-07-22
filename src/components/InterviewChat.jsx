@@ -76,7 +76,7 @@ export default function InterviewChat({
             onClick={handleEndChat}
             disabled={loading || Boolean(explosion)}
           >
-            End Chat 🍿
+            End Chat 🏆
           </button>
         </div>
 
@@ -84,14 +84,14 @@ export default function InterviewChat({
           {messages.map((msg, i) => (
             <div key={i} className={msg.role === 'assistant' ? 'chat-ai' : 'chat-user'}>
               <span className="chat-label">
-                {msg.role === 'assistant' ? 'Insight Observer' : 'You'}
+                {msg.role === 'assistant' ? 'Theatre Theatrics' : 'You'}
               </span>
               <p>{msg.content}</p>
             </div>
           ))}
           {loading && (
             <div className="chat-ai">
-              <span className="chat-label">Insight Observer</span>
+              <span className="chat-label">Theatre Theatrics</span>
               <p className="muted">Thinking…</p>
             </div>
           )}

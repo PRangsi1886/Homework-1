@@ -77,9 +77,9 @@ app.get('/api/health', (_req, res) => {
 app.get('/', (_req, res) => {
   res.type('html').send(`<!doctype html>
 <html lang="en">
-<head><meta charset="UTF-8"><title>Insight Observer API</title></head>
+<head><meta charset="UTF-8"><title>Theatre Theatrics API</title></head>
 <body style="font-family: system-ui, sans-serif; max-width: 40rem; margin: 3rem auto; line-height: 1.6;">
-  <h1>Insight Observer API</h1>
+  <h1>Theatre Theatrics API</h1>
   <p>This port (<code>${port}</code>) is the backend only — not the app UI.</p>
   <p>Open the frontend at <a href="http://localhost:5176">http://localhost:5176</a> after running <code>npm run dev</code>.</p>
   <p>Health check: <a href="/api/health">/api/health</a></p>
@@ -184,6 +184,7 @@ app.post('/api/visual-evaluation', async (req, res) => {
       ? `You analyze facial expressions and engagement while someone reviews a video on-site without embedded playback.
 Return ONLY valid JSON with this schema:
 {
+  "reactionScore": number 0-100 (higher = more positive/happy reactions overall),
   "overallEngagement": "brief overall assessment",
   "summary": "2-3 sentence narrative of emotional journey",
   "observations": [
@@ -199,6 +200,7 @@ Use capture order instead of video timestamps.`
       : `You analyze facial expressions and engagement while someone watches a video.
 Return ONLY valid JSON with this schema:
 {
+  "reactionScore": number 0-100 (higher = more positive/happy reactions overall),
   "overallEngagement": "brief overall assessment",
   "summary": "2-3 sentence narrative of emotional journey",
   "observations": [
@@ -257,7 +259,7 @@ app.post('/api/interview', async (req, res) => {
   try {
     const openai = await getOpenAI()
 
-    const systemPrompt = `You are Insight Observer, a warm post-viewing interviewer.
+    const systemPrompt = `You are Theatre Theatrics, a warm post-viewing interviewer.
 The user just finished watching a YouTube video while you observed their reactions via webcam.
 
 VIDEO METADATA:
@@ -325,7 +327,7 @@ Return ONLY valid JSON:
   "dislikes": ["..."],
   "criticReviews": [
     {
-      "author": "Insight Observer",
+      "author": "Theatre Theatrics",
       "timeAgo": "Just now",
       "rating": 1-5,
       "text": "A punchy 1-2 sentence review summary pulling from interview + visual data"
@@ -361,6 +363,6 @@ Write the final synthesis report.`,
 })
 
 app.listen(port, () => {
-  console.log(`Insight Observer API running at http://localhost:${port}`)
+  console.log(`Theatre Theatrics API running at http://localhost:${port}`)
   console.log(`Open the app at http://localhost:5176`)
 })

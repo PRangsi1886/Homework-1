@@ -153,6 +153,11 @@ export default function App() {
     await finishWatching()
   }
 
+  async function handleFinishAnalyze() {
+    setContinuing(true)
+    await finishWatching()
+  }
+
   const handleTimeUpdate = useCallback((time) => {
     currentTimeRef.current = time
     setCurrentTime(time)
@@ -210,15 +215,15 @@ export default function App() {
     <div className="app">
       <header className="hero">
         <div>
-          <p className="eyebrow">🍿 POPCORN OBSERVER</p>
-          <h1>Watch. React. Uncover Your Insights.</h1>
+          <p className="eyebrow">🏆 THEATRE THEATRICS</p>
+          <h1>Paste, Watch, React, Analyze.</h1>
           <p className="subtitle">
             Paste any YouTube link, let our AI analyze your real-time facial expressions, chat
             about your experience, and get a tailored sentiment breakdown.
           </p>
         </div>
         <div className="status-pill">
-          {apiReady ? '🔴 LIVE AI OBSERVER' : '🔑 Add OPENAI_API_KEY to .env'}
+          {apiReady ? '🎭 LIVE AI CRITIC' : '🔑 Add OPENAI_API_KEY to .env'}
         </div>
       </header>
 
@@ -240,7 +245,7 @@ export default function App() {
               onClick={handleLoadMetadata}
               disabled={loadingMeta || !url.trim()}
             >
-              {loadingMeta ? 'Loading…' : '🍿 Start Movie Night'}
+              {loadingMeta ? 'Loading…' : '🎬 Start Showtime'}
             </button>
           </div>
 
@@ -282,7 +287,7 @@ export default function App() {
               ? 'Direct playback failed for this clip. Read the transcript on-site while we capture your reactions.'
               : useDirectPlayback
                 ? 'Playing on-site via direct stream. Your webcam captures reactions with transcript sync.'
-                : `Your webcam is on. Insight Observer captures up to ${maxSamples} reaction snapshots.`}
+                : `Your webcam is on. Theatre Theatrics captures up to ${maxSamples} reaction snapshots.`}
           </p>
 
           <div className="watch-grid">
@@ -360,7 +365,7 @@ export default function App() {
                 onClick={handleStartInterview}
                 disabled={startingInterview}
               >
-                {startingInterview ? 'Opening interview…' : '🍿 Begin Interview'}
+                {startingInterview ? 'Opening interview…' : '🏆 Begin Interview'}
               </button>
             </section>
           )}

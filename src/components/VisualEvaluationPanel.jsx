@@ -1,4 +1,6 @@
 import { formatTimestamp } from '../lib/utils'
+import { scoreFromEvaluation } from '../lib/reactionGif'
+import ReactionGif from './ReactionGif'
 
 export default function VisualEvaluationPanel({ evaluation, loading }) {
   if (loading) {
@@ -15,6 +17,10 @@ export default function VisualEvaluationPanel({ evaluation, loading }) {
   return (
     <section className="panel evaluation-panel">
       <h2>Visual Evaluation</h2>
+      <ReactionGif
+        score={scoreFromEvaluation(evaluation)}
+        subtitle={evaluation.overallEngagement}
+      />
       <p className="engagement-badge">{evaluation.overallEngagement}</p>
       <p className="evaluation-summary">{evaluation.summary}</p>
 

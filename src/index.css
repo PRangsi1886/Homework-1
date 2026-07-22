@@ -1,17 +1,21 @@
 :root {
-  --bg: #0f0f0f;
-  --card: #181818;
-  --card-alt: #212121;
-  --border: #282828;
-  --border-input: #383838;
-  --input-bg: #252525;
-  --red: #e50914;
-  --red-hover: #b80710;
-  --text: #ffffff;
-  --muted: #aaaaaa;
-  --shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
-  --popcorn-cursor: url('/kettle-corn-cursor-64.png') 15 15, url('/kettle-corn-cursor.png') 8 8, auto;
-  --popcorn-pointer: url('/kettle-corn-cursor-64.png') 15 15, url('/kettle-corn-cursor.png') 8 8, pointer;
+  --bg: #080808;
+  --card: #111111;
+  --card-alt: #1a1612;
+  --border: #2a2218;
+  --border-input: #3d3428;
+  --input-bg: #141210;
+  --gold: #d4af37;
+  --gold-light: #f0d875;
+  --gold-dark: #9a7209;
+  --red: #a61b2e;
+  --red-hover: #c41e3a;
+  --accent: #d4af37;
+  --text: #f5f0e6;
+  --muted: #a89880;
+  --shadow: 0 16px 48px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(212, 175, 55, 0.06);
+  --oscar-cursor: url('/oscar-cursor-64.png') 18 92, url('/oscar-cursor.png') 9 46, auto;
+  --oscar-pointer: url('/oscar-cursor-64.png') 18 92, url('/oscar-cursor.png') 9 46, pointer;
 }
 
 * {
@@ -23,13 +27,16 @@ body,
 #root {
   margin: 0;
   min-height: 100vh;
-  cursor: var(--popcorn-cursor);
+  cursor: var(--oscar-cursor);
 }
 
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   color: var(--text);
-  background: var(--bg);
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(212, 175, 55, 0.08), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 100%, rgba(166, 27, 46, 0.06), transparent),
+    var(--bg);
 }
 
 a,
@@ -38,7 +45,7 @@ input,
 summary,
 .btn,
 [role='button'] {
-  cursor: var(--popcorn-pointer);
+  cursor: var(--oscar-pointer);
 }
 
 .app {
@@ -57,8 +64,8 @@ summary,
 
 .eyebrow {
   font-family: 'Space Mono', monospace;
-  color: var(--red);
-  letter-spacing: 0.08em;
+  color: var(--gold);
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   font-size: 0.78rem;
   font-weight: 700;
@@ -78,6 +85,10 @@ h1 {
   font-size: clamp(1.7rem, 4vw, 2.5rem);
   line-height: 1.15;
   font-weight: 700;
+  background: linear-gradient(135deg, var(--gold-light), var(--gold), #fff8e7);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 h2 {
@@ -93,20 +104,20 @@ h2 {
 }
 
 .status-pill {
-  background: var(--card);
-  border: 1px solid var(--border);
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.28);
   border-radius: 999px;
   padding: 0.55rem 0.9rem;
   font-size: 0.82rem;
   font-weight: 600;
   white-space: nowrap;
-  color: var(--text);
+  color: var(--gold-light);
   font-family: 'Space Mono', monospace;
 }
 
 .panel {
   background: var(--card);
-  border: 1px solid var(--border);
+  border: 1px solid rgba(212, 175, 55, 0.14);
   border-radius: 16px;
   padding: 1.4rem;
   margin-bottom: 1rem;
@@ -116,14 +127,14 @@ h2 {
 }
 
 .panel::before {
-  content: 'POPCORN';
+  content: 'THEATRE';
   position: absolute;
   top: 0.5rem;
   right: 1rem;
   font-family: 'Space Mono', monospace;
   font-size: 3rem;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.05);
+  color: rgba(212, 175, 55, 0.06);
   pointer-events: none;
   letter-spacing: 0.2em;
 }
@@ -158,8 +169,8 @@ input[type='text'] {
 
 input:focus {
   outline: none;
-  border-color: var(--red);
-  box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.25);
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.22);
 }
 
 .btn {
@@ -169,16 +180,16 @@ input:focus {
   font: inherit;
   font-weight: 700;
   font-family: 'Inter', system-ui, sans-serif;
-  background: var(--red);
-  color: var(--text);
-  box-shadow: 0 4px 20px rgba(229, 9, 20, 0.4);
+  background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+  color: #1a1208;
+  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.35);
   transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
 }
 
 .btn:hover:not(:disabled) {
-  background: var(--red-hover);
+  background: linear-gradient(135deg, #fff0a8, var(--gold));
   transform: translateY(-1px);
-  box-shadow: 0 6px 24px rgba(229, 9, 20, 0.5);
+  box-shadow: 0 6px 24px rgba(212, 175, 55, 0.45);
 }
 
 .btn:disabled {
@@ -207,7 +218,7 @@ input:focus {
 .btn-end-chat {
   background: var(--red);
   color: var(--text);
-  box-shadow: 0 4px 20px rgba(229, 9, 20, 0.4);
+  box-shadow: 0 4px 20px rgba(166, 27, 46, 0.4);
 }
 
 .btn-end-chat:active {
@@ -246,7 +257,7 @@ input:focus {
 }
 
 details summary {
-  cursor: var(--popcorn-pointer);
+  cursor: var(--oscar-pointer);
   font-weight: 600;
   color: var(--text);
   font-family: 'Inter', system-ui, sans-serif;
@@ -332,7 +343,7 @@ details summary {
 }
 
 .transcript-segment.active {
-  background: rgba(229, 9, 20, 0.18);
+  background: rgba(166, 27, 46, 0.18);
   color: var(--text);
   box-shadow: inset 3px 0 0 var(--accent);
 }
@@ -403,9 +414,9 @@ details summary {
   padding: 0.9rem 1.4rem;
   font: inherit;
   font-weight: 700;
-  background: var(--red);
+  background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
   color: white;
-  box-shadow: 0 4px 20px rgba(229, 9, 20, 0.4);
+  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.35);
 }
 
 .player-hint {
@@ -419,8 +430,8 @@ details summary {
   margin: 0.5rem 0 0;
   padding: 0.65rem 0.85rem;
   border-radius: 8px;
-  background: rgba(229, 9, 20, 0.12);
-  border: 1px solid rgba(229, 9, 20, 0.35);
+  background: rgba(166, 27, 46, 0.12);
+  border: 1px solid rgba(166, 27, 46, 0.35);
   color: #ff6b6b;
   font-size: 0.9rem;
 }
@@ -599,7 +610,7 @@ details summary {
 
 .obs-time {
   font-family: 'Space Mono', monospace;
-  color: var(--red);
+  color: var(--gold);
   font-size: 0.78rem;
 }
 
@@ -657,7 +668,7 @@ details summary {
   display: block;
   font-family: 'Space Mono', monospace;
   font-size: 0.72rem;
-  color: var(--red);
+  color: var(--gold);
   margin-bottom: 0.35rem;
 }
 
@@ -755,7 +766,7 @@ details summary {
 .report-eyebrow {
   margin: 0 0 0.25rem;
   font-size: 0.78rem;
-  color: var(--red);
+  color: var(--gold);
   font-family: 'Space Mono', monospace;
 }
 
@@ -915,7 +926,7 @@ details summary {
 }
 
 .star.filled {
-  color: var(--red);
+  color: var(--gold);
 }
 
 .critic-text {
@@ -930,7 +941,7 @@ details summary {
   margin: 0.75rem 0 0;
   padding: 0.65rem 0.85rem;
   border-left: 3px solid var(--red);
-  background: rgba(229, 9, 20, 0.08);
+  background: rgba(166, 27, 46, 0.08);
   border-radius: 0 8px 8px 0;
   color: var(--muted);
   font-style: italic;
@@ -946,7 +957,7 @@ details summary {
 
 .report-body-block h3 {
   margin: 0 0 0.75rem;
-  color: var(--red);
+  color: var(--gold);
 }
 
 .report-body-block p {
@@ -975,7 +986,7 @@ details summary {
 }
 
 .dislikes-block {
-  border: 1px solid rgba(229, 9, 20, 0.25);
+  border: 1px solid rgba(166, 27, 46, 0.25);
 }
 
 .likes-block h4,
@@ -1004,8 +1015,8 @@ details summary {
   margin-top: 1rem;
   padding: 1rem;
   border-radius: 8px;
-  background: rgba(229, 9, 20, 0.08);
-  border: 1px solid rgba(229, 9, 20, 0.2);
+  background: rgba(166, 27, 46, 0.08);
+  border: 1px solid rgba(166, 27, 46, 0.2);
   color: var(--text);
   line-height: 1.6;
   font-family: 'Inter', system-ui, sans-serif;
@@ -1019,8 +1030,8 @@ details summary {
 }
 
 .alert-error {
-  background: rgba(229, 9, 20, 0.12);
-  border: 1px solid rgba(229, 9, 20, 0.35);
+  background: rgba(166, 27, 46, 0.12);
+  border: 1px solid rgba(166, 27, 46, 0.35);
   color: #ff6b6b;
 }
 
@@ -1044,5 +1055,73 @@ details summary {
   .chat-input-row,
   .panel-header {
     flex-direction: column;
+  }
+}
+
+
+.reaction-gif-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0.85rem 0 1.1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.12), rgba(166, 27, 46, 0.08));
+  border: 1px solid rgba(212, 175, 55, 0.22);
+}
+
+.reaction-gif-img {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 2px solid rgba(212, 175, 55, 0.35);
+  flex-shrink: 0;
+  background: #0a0a0a;
+}
+
+.reaction-gif-meta {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.reaction-gif-emoji {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.reaction-gif-label {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--gold-light);
+  font-family: 'Space Mono', monospace;
+}
+
+.reaction-gif-score {
+  margin: 0.25rem 0 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.reaction-gif-sub {
+  margin: 0.35rem 0 0;
+  font-size: 0.88rem;
+  color: var(--text);
+  line-height: 1.45;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+@media (max-width: 820px) {
+  .reaction-gif-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .reaction-gif-meta {
+    flex-direction: column;
+    align-items: center;
   }
 }

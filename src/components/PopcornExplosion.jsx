@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 
-const KERNEL_SRC = '/kettle-corn-cursor-64.png'
+const OSCAR_SRC = '/oscar-cursor-64.png'
 
 function burstParticles() {
   return Array.from({ length: 24 }, (_, i) => ({
@@ -30,11 +30,11 @@ export default function PopcornExplosion({ origin, onDone }) {
       style={{ left: origin.x, top: origin.y }}
       aria-hidden="true"
     >
-      <img src={KERNEL_SRC} alt="" className="popcorn-burst-core" draggable={false} />
+      <img src={OSCAR_SRC} alt="" className="popcorn-burst-core" draggable={false} />
       {particles.map((p) => (
         <img
           key={p.id}
-          src={KERNEL_SRC}
+          src={OSCAR_SRC}
           alt=""
           className="popcorn-particle"
           draggable={false}
