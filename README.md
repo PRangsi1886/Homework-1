@@ -19,11 +19,11 @@ cp .env.example .env
 npm run dev
 ```
 
-Open the URL shown in the terminal (usually http://localhost:5173).
+Open the **Local** URL printed in the terminal after `npm run dev` (Vite default: `http://localhost:5173`; if that port is taken, it uses the next free one). The API runs on `http://localhost:3003`.
 
 ## Flow
 
-1. Paste a YouTube URL and click **Load Video**
+1. Paste a YouTube URL and click **Start Movie Night**
 2. Click **Start Watching** — allow webcam access
 3. When the video ends, the app runs visual evaluation
 4. Click **Start Interview** to chat with Insight Observer
