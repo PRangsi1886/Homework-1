@@ -6,9 +6,11 @@ import {
 } from './aiGrading.js'
 import {
   buildVisionInput,
+  createJsonResponse,
   createTextResponse,
   toResponseInputMessages,
 } from './openaiResponses.js'
+import { FINAL_REPORT_SCHEMA, VISUAL_EVALUATION_SCHEMA } from './jsonSchemas.js'
 import { fetchYouTubeMetadata, extractVideoId, getVideoStreamUrl } from './youtube.js'
 
 const app = express()
@@ -26,19 +28,6 @@ async function getOpenAI() {
   }
   const { default: OpenAI } = await import('openai')
   return new OpenAI({ apiKey })
-}
-
-function extractJsonBlock(text) {
-  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/)
-  if (fenced) return JSON.parse(fenced[1])
-
-  const start = text.indexOf('{')
-  const end = text.lastIndexOf('}')
-  if (start !== -1 && end > start) {
-    return JSON.parse(text.slice(start, end + 1))
-  }
-
-  throw new Error('Model response did not contain valid JSON.')
 }
 
 function formatTimestamp(seconds) {
@@ -187,36 +176,8 @@ app.post('/api/visual-evaluation', async (req, res) => {
 
     const systemPrompt = restricted
       ? `You analyze facial expressions and engagement while someone reviews a video on-site without embedded playback.
-Return ONLY valid JSON with this schema:
-{
-  "reactionScore": number 0-100 (higher = more positive/happy reactions overall),
-  "overallEngagement": "brief overall assessment",
-  "summary": "2-3 sentence narrative of emotional journey",
-  "observations": [
-    {
-      "timestamp": number (capture order index, starting at 1),
-      "timestampLabel": "Capture N",
-      "expression": "e.g. smile, furrowed brow, surprise",
-      "interpretation": "what this likely indicates"
-    }
-  ]
-}
-Use capture order instead of video timestamps.`
+Use capture order instead of video timestamps for each observation.`
       : `You analyze facial expressions and engagement while someone watches a video.
-Return ONLY valid JSON with this schema:
-{
-  "reactionScore": number 0-100 (higher = more positive/happy reactions overall),
-  "overallEngagement": "brief overall assessment",
-  "summary": "2-3 sentence narrative of emotional journey",
-  "observations": [
-    {
-      "timestamp": number (seconds),
-      "timestampLabel": "M:SS",
-      "expression": "e.g. smile, furrowed brow, surprise",
-      "interpretation": "what this likely indicates"
-    }
-  ]
-}
 Match observation timestamps to the provided capture times.`
 
     const userText = `Video being watched:
@@ -227,12 +188,13 @@ ${timestampList}
 
 Analyze these ${images.length} webcam captures in order.`
 
-    const content = await createTextResponse(openai, {
+    const evaluation = await createJsonResponse(openai, {
       model: MODEL,
       instructions: systemPrompt,
       input: buildVisionInput(userText, imageContent),
+      schema: VISUAL_EVALUATION_SCHEMA,
+      schemaName: 'visual_evaluation',
     })
-    const evaluation = extractJsonBlock(content)
     res.json(evaluation)
   } catch (err) {
     console.error('Visual evaluation failed:', err)
@@ -293,34 +255,7 @@ app.post('/api/final-report', async (req, res) => {
       .join('\n\n')
 
     const systemContent = `You synthesize a final emotional viewing report styled like a movie review page.
-Return ONLY valid JSON:
-{
-  "headline": "short evocative review headline about how the user felt",
-  "overallScore": 0-10 number with one decimal (e.g. 7.8),
-  "overallSentiment": "positive | mixed | negative | neutral",
-  "ratedLabel": "short label e.g. Based on 20 reaction captures",
-  "emotionalSummary": "2-3 paragraphs on how the user felt watching the video",
-  "scores": {
-    "engagement": { "value": 0-100, "label": "Engagement" },
-    "visual": { "value": 0-100, "label": "Visual React" },
-    "verbal": { "value": 0-100, "label": "Verbal Review" }
-  },
-  "keyMoments": [
-    { "timestampLabel": "M:SS", "reaction": "...", "meaning": "..." }
-  ],
-  "likes": ["..."],
-  "dislikes": ["..."],
-  "criticReviews": [
-    {
-      "author": "Theatre Theatrics",
-      "timeAgo": "Just now",
-      "rating": 1-5,
-      "text": "A punchy 1-2 sentence review summary pulling from interview + visual data"
-    }
-  ],
-  "viewerQuote": "One memorable quote paraphrased from the user's interview answers",
-  "recommendations": "1-2 sentences"
-}`
+Pull from the interview transcript and visual evaluation. Use one decimal for overallScore when appropriate.`
 
     const userContent = `VIDEO METADATA:
 ${metadataBlock(videoMetadata ?? {})}
@@ -335,12 +270,13 @@ Write the final synthesis report.`
 
     const finalPrompt = `MODEL: ${MODEL}\n\n=== SYSTEM ===\n${systemContent}\n\n=== USER ===\n${userContent}`
 
-    const content = await createTextResponse(openai, {
+    const report = await createJsonResponse(openai, {
       model: MODEL,
       instructions: systemContent,
       input: userContent,
+      schema: FINAL_REPORT_SCHEMA,
+      schemaName: 'final_report',
     })
-    const report = extractJsonBlock(content)
 
     await writeAiGradingArtifacts({
       videoMetadata,

@@ -7,9 +7,11 @@ import { fetchYouTubeMetadata } from '../server/youtube.js'
 import { writeAiGradingArtifacts } from '../server/aiGrading.js'
 import {
   buildVisionInput,
+  createJsonResponse,
   createTextResponse,
   toResponseInputMessages,
 } from '../server/openaiResponses.js'
+import { FINAL_REPORT_SCHEMA, VISUAL_EVALUATION_SCHEMA } from '../server/jsonSchemas.js'
 
 const MODEL = process.env.OPENAI_MODEL?.trim() || 'gpt-5.6-luna'
 const TEST_URL =
@@ -23,15 +25,6 @@ async function getOpenAI() {
   if (!apiKey) throw new Error('OPENAI_API_KEY is missing from .env')
   const { default: OpenAI } = await import('openai')
   return new OpenAI({ apiKey })
-}
-
-function extractJsonBlock(text) {
-  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/)
-  if (fenced) return JSON.parse(fenced[1])
-  const start = text.indexOf('{')
-  const end = text.lastIndexOf('}')
-  if (start !== -1 && end > start) return JSON.parse(text.slice(start, end + 1))
-  throw new Error('Model response did not contain valid JSON.')
 }
 
 function metadataBlock(metadata) {
@@ -74,18 +67,17 @@ async function runVisualEvaluation(openai, metadata, frames) {
     .map((img) => `Image at ${img.timestampLabel} (${img.timestamp}s)`)
     .join('\n')
 
-  const systemPrompt = `You analyze facial expressions and engagement while someone watches a video.
-Return ONLY valid JSON with reactionScore, overallEngagement, summary, and observations array.`
+  const systemPrompt = `You analyze facial expressions and engagement while someone watches a video.`
 
   const userText = `Video being watched:\n${metadataBlock(metadata)}\n\nCapture timestamps:\n${timestampList}\n\nAnalyze these ${frames.length} webcam captures in order.`
 
-  const content = await createTextResponse(openai, {
+  return createJsonResponse(openai, {
     model: MODEL,
     instructions: systemPrompt,
     input: buildVisionInput(userText, frames),
+    schema: VISUAL_EVALUATION_SCHEMA,
+    schemaName: 'visual_evaluation',
   })
-
-  return extractJsonBlock(content)
 }
 
 async function runInterview(openai, metadata, visualEvaluation) {
@@ -129,8 +121,7 @@ async function runFinalReport(openai, metadata, visualEvaluation, chatHistory) {
     .map((m) => `${m.role === 'assistant' ? 'Interviewer' : 'User'}: ${m.content}`)
     .join('\n\n')
 
-  const systemContent = `You synthesize a final emotional viewing report styled like a movie review page.
-Return ONLY valid JSON with headline, overallScore, overallSentiment, ratedLabel, emotionalSummary, scores, keyMoments, likes, dislikes, criticReviews, viewerQuote, and recommendations.`
+  const systemContent = `You synthesize a final emotional viewing report styled like a movie review page.`
 
   const userContent = `VIDEO METADATA:
 ${metadataBlock(metadata)}
@@ -143,13 +134,13 @@ ${transcript}
 
 Write the final synthesis report.`
 
-  const content = await createTextResponse(openai, {
+  const report = await createJsonResponse(openai, {
     model: MODEL,
     instructions: systemContent,
     input: userContent,
+    schema: FINAL_REPORT_SCHEMA,
+    schemaName: 'final_report',
   })
-
-  const report = extractJsonBlock(content)
   const finalPrompt = `MODEL: ${MODEL}\n\n=== SYSTEM ===\n${systemContent}\n\n=== USER ===\n${userContent}`
 
   return { report, finalPrompt }
