@@ -1,11 +1,19 @@
 import 'dotenv/config'
 import express from 'express'
 import { Readable } from 'node:stream'
+import {
+  writeAiGradingArtifacts,
+} from './aiGrading.js'
+import {
+  buildVisionInput,
+  createTextResponse,
+  toResponseInputMessages,
+} from './openaiResponses.js'
 import { fetchYouTubeMetadata, extractVideoId, getVideoStreamUrl } from './youtube.js'
 
 const app = express()
 const port = process.env.PORT || 3003
-const MODEL = 'gpt-5.6'
+const MODEL = process.env.OPENAI_MODEL?.trim() || 'gpt-5.6-luna'
 
 app.use(express.json({ limit: '25mb' }))
 
@@ -165,10 +173,7 @@ app.post('/api/visual-evaluation', async (req, res) => {
   try {
     const openai = await getOpenAI()
 
-    const imageContent = images.map((img) => ({
-      type: 'image_url',
-      image_url: { url: img.dataUrl, detail: 'low' },
-    }))
+    const imageContent = images.map((img) => ({ dataUrl: img.dataUrl }))
 
     const restricted = Boolean(videoMetadata?.playbackRestricted)
     const timestampList = images
@@ -214,33 +219,19 @@ Return ONLY valid JSON with this schema:
 }
 Match observation timestamps to the provided capture times.`
 
-    const response = await openai.chat.completions.create({
-      model: MODEL,
-      messages: [
-        {
-          role: 'system',
-          content: systemPrompt,
-        },
-        {
-          role: 'user',
-          content: [
-            {
-              type: 'text',
-              text: `Video being watched:
+    const userText = `Video being watched:
 ${metadataBlock(videoMetadata ?? {})}
 
 ${restricted ? 'Capture order:' : 'Capture timestamps:'}
 ${timestampList}
 
-Analyze these ${images.length} webcam captures in order.`,
-            },
-            ...imageContent,
-          ],
-        },
-      ],
-    })
+Analyze these ${images.length} webcam captures in order.`
 
-    const content = response.choices[0]?.message?.content ?? ''
+    const content = await createTextResponse(openai, {
+      model: MODEL,
+      instructions: systemPrompt,
+      input: buildVisionInput(userText, imageContent),
+    })
     const evaluation = extractJsonBlock(content)
     res.json(evaluation)
   } catch (err) {
@@ -275,12 +266,11 @@ Your goals:
 - Keep questions conversational, one at a time.
 - Be curious, not judgmental.`
 
-    const response = await openai.chat.completions.create({
+    const reply = await createTextResponse(openai, {
       model: MODEL,
-      messages: [{ role: 'system', content: systemPrompt }, ...messages],
+      instructions: systemPrompt,
+      input: toResponseInputMessages(messages),
     })
-
-    const reply = (response.choices[0]?.message?.content ?? '').trim()
     res.json({ reply })
   } catch (err) {
     console.error('Interview failed:', err)
@@ -302,12 +292,7 @@ app.post('/api/final-report', async (req, res) => {
       .map((m) => `${m.role === 'assistant' ? 'Interviewer' : 'User'}: ${m.content}`)
       .join('\n\n')
 
-    const response = await openai.chat.completions.create({
-      model: MODEL,
-      messages: [
-        {
-          role: 'system',
-          content: `You synthesize a final emotional viewing report styled like a movie review page.
+    const systemContent = `You synthesize a final emotional viewing report styled like a movie review page.
 Return ONLY valid JSON:
 {
   "headline": "short evocative review headline about how the user felt",
@@ -335,11 +320,9 @@ Return ONLY valid JSON:
   ],
   "viewerQuote": "One memorable quote paraphrased from the user's interview answers",
   "recommendations": "1-2 sentences"
-}`,
-        },
-        {
-          role: 'user',
-          content: `VIDEO METADATA:
+}`
+
+    const userContent = `VIDEO METADATA:
 ${metadataBlock(videoMetadata ?? {})}
 
 VISUAL EVALUATION:
@@ -348,13 +331,24 @@ ${visualEvalBlock(visualEvaluation)}
 INTERVIEW TRANSCRIPT:
 ${transcript || 'No interview conducted.'}
 
-Write the final synthesis report.`,
-        },
-      ],
+Write the final synthesis report.`
+
+    const finalPrompt = `MODEL: ${MODEL}\n\n=== SYSTEM ===\n${systemContent}\n\n=== USER ===\n${userContent}`
+
+    const content = await createTextResponse(openai, {
+      model: MODEL,
+      instructions: systemContent,
+      input: userContent,
+    })
+    const report = extractJsonBlock(content)
+
+    await writeAiGradingArtifacts({
+      videoMetadata,
+      visualEvaluation,
+      finalPrompt,
+      finalReport: report,
     })
 
-    const content = response.choices[0]?.message?.content ?? ''
-    const report = extractJsonBlock(content)
     res.json(report)
   } catch (err) {
     console.error('Final report failed:', err)

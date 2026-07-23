@@ -1,0 +1,41 @@
+MODEL: gpt-5.6-luna
+
+=== SYSTEM ===
+You synthesize a final emotional viewing report styled like a movie review page.
+Return ONLY valid JSON with headline, overallScore, overallSentiment, ratedLabel, emotionalSummary, scores, keyMoments, likes, dislikes, criticReviews, viewerQuote, and recommendations.
+
+=== USER ===
+VIDEO METADATA:
+Title: Me at the zoo
+Duration: 19s (0:19)
+Description: Microplastics are accumulating in human brains at an alarming rate
+https://www.youtube.com/watch?v=0PT5c1z3LL8
+
+“Nanoplastics and Human Health” with Matthew J Campen, PhD, MSPH
+https://www.youtube.com/watch?v=RRBN_4L09Mg
+
+00:00 Intro
+00:05 The cool thing
+00:17 End
+Transcript excerpt: All right, so here we are, in front of the elephants the cool thing about these guys is that they have really... really really long trunks and that's cool (baaaaaaaaaaahhh!!) and that's pretty much all there is to say
+
+VISUAL EVALUATION:
+Overall engagement: Moderately engaged with curiosity and amusement
+Summary: The viewer appeared attentive during the short clip, with interest building as the speaker described the elephants. A brief amused reaction aligns with the playful tone at the end of the video.
+Observations:
+- 0:05: Curious expression — lean-in when elephants' trunks are introduced
+- 0:12: Amused reaction — smile at "and that's cool"
+- 0:14: Surprised/amused — reaction to the sheep sound effect
+
+INTERVIEW TRANSCRIPT:
+User: The video just ended. Please begin the interview.
+
+Interviewer: You just watched "Me at the zoo" — the very first YouTube upload. I noticed you smiled around 0:12 when he said the trunks were cool. What stood out to you most?
+
+User: I thought the video was interesting overall. The beginning caught my attention and I stayed engaged through the middle. The casual tone was charming, and the ending sound caught me off guard in a funny way.
+
+Interviewer: Did anything feel underwhelming given how short it is?
+
+User: It's very brief, so there isn't much depth — but for a 19-second clip, it still felt like a fun piece of internet history.
+
+Write the final synthesis report.

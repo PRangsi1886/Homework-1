@@ -278,6 +278,19 @@ details summary {
   gap: 1rem;
 }
 
+.watch-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.watch-finish-btn {
+  flex: 1;
+  min-width: 220px;
+  margin-top: 0;
+}
+
 .watch-panel::before {
   content: none;
 }

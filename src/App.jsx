@@ -334,6 +334,25 @@ export default function App() {
             </div>
           </div>
 
+          <div className="watch-actions">
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={captureNow}
+              disabled={continuing || sampleCount >= maxSamples}
+            >
+              Capture now
+            </button>
+            <button
+              type="button"
+              className="btn btn-large watch-finish-btn"
+              onClick={handleFinishAnalyze}
+              disabled={continuing || sampleCount === 0}
+            >
+              {continuing ? 'Analyzing reactions…' : '🏆 Finish & Analyze'}
+            </button>
+          </div>
+
           <div className="watch-details">
             <details className="watch-details-block">
               <summary>Description</summary>
